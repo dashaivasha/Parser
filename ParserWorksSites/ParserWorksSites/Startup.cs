@@ -7,7 +7,7 @@ using Microsoft.Extensions.Hosting;
 using ParserWorksSites.Data.DbContexts;
 using ParserWorksSites.Data.Repositories;
 using ParserWorksSites.Services;
-using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace ParserWorksSites
 {
@@ -25,10 +25,16 @@ namespace ParserWorksSites
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<IVacancyRepository, WorkUaRepository>();
-            services.AddScoped<VacancyService>();
+            services.AddScoped<IVacancyService, VacancyService>();
+
             services.AddControllers();
             services.AddDbContext<MyDbContext>(options =>
-            options.UseSqlServer(Configuration.GetConnectionString("MyDbConnection")));
+            options.UseSqlServer(Configuration.GetConnectionString("MyDbConnection")), ServiceLifetime.Scoped);
+
+
+            var serviceProvider = services.BuildServiceProvider();
+            var vacancyService = serviceProvider.GetService<VacancyService>();
+            Console.WriteLine($"VacancyService successfully registered: {vacancyService != null}");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -45,17 +51,10 @@ namespace ParserWorksSites
 
             app.UseAuthorization();
 
-  
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
-            using (var scope = app.ApplicationServices.CreateScope())
-            {
-                var vacancyService = scope.ServiceProvider.GetRequiredService<VacancyService>();
-                vacancyService.StartParsing();
-            }
         }
     }
 }

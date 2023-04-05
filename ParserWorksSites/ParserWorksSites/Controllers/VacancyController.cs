@@ -24,10 +24,17 @@ namespace ParserWorksSites.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<Vacancy>> GetAllVacancies(string site, string type = null, int? page = null, int? pageSize = null)
+        public async Task<IEnumerable<Vacancy>> GetAllVacancies()
         {
-            return await _vacancyService.GetAllVacancies(site, type, page, pageSize);
+            return await _vacancyService.GetAllVacancies();
         }
+
+        [HttpGet("Parser")]
+        public async Task StartParser()
+        {
+            await _vacancyService.StartParsing();
+        }
+
 
         [HttpGet("{id}")]
         public async Task<Vacancy> GetVacancyById(int id)

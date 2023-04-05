@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace ParserWorksSites.Parsers
@@ -18,18 +19,27 @@ namespace ParserWorksSites.Parsers
             {
                 if (div != null)
                 {
-
                     var vacancyUrl = String.Concat(parentLink, div.QuerySelector("h2")?.QuerySelector("a")?.GetAttribute("href"));
                     var config = Configuration.Default.WithDefaultLoader();
                     var context = BrowsingContext.New(config);
                     var vacancyDocument = await context.OpenAsync(vacancyUrl);
                     var categoryElement = vacancyDocument.QuerySelector("span.add-top-xs");
                     var type = categoryElement?.TextContent;
-                    context.Dispose();
+                    string resultType = "";
+                    if (!string.IsNullOrEmpty(type))
+                    {
+                        string pattern = @"^\s*([\p{L}\p{M}\-]+\s*[\p{L}\p{M}\-]*)";
+                        Regex regex = new Regex(pattern);
+                        Match match = regex.Match(type);
+                        resultType = match.Groups[1].Value;
+                    }
+                    await context.OpenAsync(parentLink);
+
+                    
 
                     vacancy = vacancy.Append(new Vacancy(
                 div.QuerySelector("h2")?.TextContent,
-                type,
+                resultType,
                 String.Concat(parentLink, div.QuerySelector("h2")?.QuerySelector("a")?.GetAttribute("href"))
             ));
                 }

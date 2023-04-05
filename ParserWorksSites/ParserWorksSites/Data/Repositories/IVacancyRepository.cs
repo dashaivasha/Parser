@@ -9,7 +9,7 @@ namespace ParserWorksSites.Data.Repositories
         Task<Vacancy> GetVacancyById(int id);
         Task<IEnumerable<Vacancy>> GetAllVacancies();
         Task<IEnumerable<Vacancy>> GetVacanciesByTypeAsync(string type);
-        Task CreateVacancyAsync(Vacancy vacancy);
+        Task AddVacanciesAsync(Task<IEnumerable<Vacancy>> vacancies);
 
     }
 }

@@ -3,6 +3,7 @@ using ParserWorksSites.Data.DbContexts;
 using ParserWorksSites.Data.Models;
 using ParserWorksSites.Data.Repositories;
 using ParserWorksSites.Parsers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,7 +21,7 @@ namespace ParserWorksSites.Services
             _dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<Vacancy>> GetAllVacancies(string site, string type = null, int? page = null, int? pageSize = null)
+        public async Task<IEnumerable<Vacancy>> GetAllVacancies()
         {
             return await _vacancyRepository.GetAllVacancies();
         }
@@ -62,15 +63,10 @@ namespace ParserWorksSites.Services
                 var vacanciesDivs = document.QuerySelectorAll("div.card-hover");
 
                 var vacancies = await WorkUaParser.GetObjectsFromDivs(vacanciesDivs, parentLink);
-                var vacancyList = vacancies.ToList();
-
-                foreach (var vacancy in vacancyList)
-                {
-                    await _vacancyRepository.CreateVacancyAsync(vacancy);
-                }
-
-                await _dbContext.SaveChangesAsync();
-            }
+                await _vacancyRepository.AddVacanciesAsync(Task.FromResult(vacancies));
+                   
+          
+        }
         }
 
 

@@ -15,7 +15,7 @@ namespace ParserWorksSites.Data.DbContexts
         {
             modelBuilder.Entity<Vacancy>()
                 .Property(v => v.Title)
-                .HasMaxLength(50)
+                .HasMaxLength(100)
                 .IsRequired();
         }
     }

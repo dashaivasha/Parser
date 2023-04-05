@@ -11,8 +11,8 @@ using ParserWorksSites.Data.DbContexts;
 namespace ParserWorksSites.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    [Migration("20230405152017_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20230405182806_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -36,9 +36,7 @@ namespace ParserWorksSites.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Type")
                         .HasColumnType("nvarchar(max)");

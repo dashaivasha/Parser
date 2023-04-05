@@ -22,16 +22,9 @@ namespace ParserWorksSites.Data.Repositories
             return await _dbContext.Vacancy.ToListAsync();
         }
 
-        public async Task<Vacancy> GetVacancyById(int id)
+        public async Task<Vacancy?> GetVacancyByIdAsync(int id)
         {
-            return _dbContext.Vacancy.FirstOrDefault();
-        }
-
-        public async Task<IEnumerable<Vacancy>> GetVacanciesByTypeAsync(string type)
-        {
-            return await _dbContext.Vacancy
-                .Where(v => v.Type == type)
-                .ToListAsync();
+            return await _dbContext.Vacancy.FirstOrDefaultAsync(v => v.Id == id);
         }
 
         public async Task AddVacanciesAsync(Task<IEnumerable<Vacancy>> vacanciesTask)

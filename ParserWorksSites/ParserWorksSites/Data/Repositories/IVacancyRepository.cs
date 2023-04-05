@@ -6,10 +6,8 @@ namespace ParserWorksSites.Data.Repositories
 {
     public interface IVacancyRepository
     {
-        Task<Vacancy> GetVacancyById(int id);
+        Task<Vacancy?> GetVacancyByIdAsync(int id);
         Task<IEnumerable<Vacancy>> GetAllVacancies();
-        Task<IEnumerable<Vacancy>> GetVacanciesByTypeAsync(string type);
         Task AddVacanciesAsync(Task<IEnumerable<Vacancy>> vacancies);
-
     }
 }

@@ -4,7 +4,6 @@ using ParserWorksSites.Data.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Metadata;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -35,7 +34,7 @@ namespace ParserWorksSites.Parsers
                     }
                     await context.OpenAsync(parentLink);
 
-                    
+
 
                     vacancy = vacancy.Append(new Vacancy(
                 div.QuerySelector("h2")?.TextContent,

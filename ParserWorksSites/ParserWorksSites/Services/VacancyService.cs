@@ -3,7 +3,6 @@ using ParserWorksSites.Data.DbContexts;
 using ParserWorksSites.Data.Models;
 using ParserWorksSites.Data.Repositories;
 using ParserWorksSites.Parsers;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -26,21 +25,16 @@ namespace ParserWorksSites.Services
             return await _vacancyRepository.GetAllVacancies();
         }
 
-        public async Task<IEnumerable<Vacancy>> GetVacanciesByTypeAsync(string type)
-        {
-            return await _vacancyRepository.GetVacanciesByTypeAsync(type);
-        }
-
         public async Task<Vacancy> GetVacancyById(int id)
         {
-            return await _vacancyRepository.GetVacancyById(id);
+            return await _vacancyRepository.GetVacancyByIdAsync(id);
         }
 
-        public async Task<IEnumerable<Vacancy>> GetSortedVacanciesByTypeAsync(string site, string sortType, string sortOrder, int? page = null, int? pageSize = null)
+        public async Task<IEnumerable<Vacancy>> GetSortedVacanciesByTypeAsync(string type)
         {
             var allVacancies = await _vacancyRepository.GetAllVacancies();
             var sortedVacancies = allVacancies
-                .OrderBy(v => v.Title)
+                .OrderBy(v => v.Type)
                 .ToList();
             return sortedVacancies;
         }
@@ -64,11 +58,10 @@ namespace ParserWorksSites.Services
 
                 var vacancies = await WorkUaParser.GetObjectsFromDivs(vacanciesDivs, parentLink);
                 await _vacancyRepository.AddVacanciesAsync(Task.FromResult(vacancies));
-                   
-          
-        }
-        }
 
+
+            }
+        }
 
     }
 

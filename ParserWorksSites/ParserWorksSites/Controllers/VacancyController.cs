@@ -23,7 +23,7 @@ namespace ParserWorksSites.Controllers
             _vacancyService = vacancyService;
         }
 
-        [HttpGet]
+        [HttpGet("AllVacancies")]
         public async Task<IEnumerable<Vacancy>> GetAllVacancies()
         {
             return await _vacancyService.GetAllVacancies();
@@ -35,18 +35,16 @@ namespace ParserWorksSites.Controllers
             await _vacancyService.StartParsing();
         }
 
-
         [HttpGet("{id}")]
         public async Task<Vacancy> GetVacancyById(int id)
         {
             return await _vacancyService.GetVacancyById(id);
         }
 
-        [HttpGet("type/{type}")]
+        [HttpGet("byType")]
         public async Task<IEnumerable<Vacancy>> GetVacanciesByTypeAsync(string type)
         {
-            return await _vacancyService.GetVacanciesByTypeAsync(type);
+            return await _vacancyService.GetSortedVacanciesByTypeAsync(type);
         }
-
     }
 }

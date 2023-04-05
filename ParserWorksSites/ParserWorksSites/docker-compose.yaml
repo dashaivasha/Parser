@@ -1,0 +1,17 @@
+services:
+  api:
+    build:
+      context: ../
+      dockerfile: ./ParserWorksSites/Dockerfile
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+
+  db:
+    image: "mcr.microsoft.com/mssql/server:2019-latest"
+    ports:
+      - "1433:1433"
+    environment:
+      SA_PASSWORD: "123PasswordDB"
+      ACCEPT_EULA: "Y"

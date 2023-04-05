@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Emit;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using ParserWorksSites.Data.Models;
 
 namespace ParserWorksSites.Data.DbContexts
@@ -13,15 +9,14 @@ namespace ParserWorksSites.Data.DbContexts
         public MyDbContext(DbContextOptions<MyDbContext> options) : base(options)
         { }
 
-        public virtual DbSet<Vacancy> Vacancy { get; set; }
+        public DbSet<Vacancy> Vacancy { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlServer(@"Server=Stas;Database=TestDB;Trusted_Connection=True;");
-        }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Vacancy>();
+            modelBuilder.Entity<Vacancy>()
+                .Property(v => v.Title)
+                .HasMaxLength(50)
+                .IsRequired();
         }
     }
 }

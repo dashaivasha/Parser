@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using ParserWorksSites.Data.DbContexts;
 using ParserWorksSites.Data.Models;
+using ParserWorksSites.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,55 +16,30 @@ namespace ParserWorksSites.Controllers
     [Route("[controller]")]
     public class VacancyController : ControllerBase
     {
-        private readonly MyDbContext _context;
+        private readonly IVacancyService _vacancyService;
 
-        public VacancyController(MyDbContext context)
+        public VacancyController(IVacancyService vacancyService)
         {
-            _context = context;
+            _vacancyService = vacancyService;
         }
 
         [HttpGet]
-        public IEnumerable<Vacancy> Get()
+        public async Task<IEnumerable<Vacancy>> GetAllVacancies(string site, string type = null, int? page = null, int? pageSize = null)
         {
-            return _context.Vacancy.ToList();
+            return await _vacancyService.GetAllVacancies(site, type, page, pageSize);
         }
 
         [HttpGet("{id}")]
-        public Vacancy Get(int id)
+        public async Task<Vacancy> GetVacancyById(int id)
         {
-            return _context.Vacancy.Find(id);
+            return await _vacancyService.GetVacancyById(id);
         }
 
-        [HttpPost]
-        public void Post(Vacancy vacancy)
+        [HttpGet("type/{type}")]
+        public async Task<IEnumerable<Vacancy>> GetVacanciesByTypeAsync(string type)
         {
-            _context.Vacancy.Add(vacancy);
-            _context.SaveChanges();
+            return await _vacancyService.GetVacanciesByTypeAsync(type);
         }
 
-        [HttpPut("{id}")]
-        public void Put(int id, Vacancy vacancy)
-        {
-            if (id != vacancy.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(vacancy).State = EntityState.Modified;
-            _context.SaveChanges();
-        }
-
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-            var vacancy = _context.Vacancy.Find(id);
-            if (vacancy == null)
-            {
-                return NotFound();
-            }
-
-            _context.Vacancy.Remove(vacancy);
-            _context.SaveChanges();
-        }
     }
 }

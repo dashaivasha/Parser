@@ -1,13 +1,11 @@
-﻿using ParserWorksSites.Data.Models;
-using ParserWorksSites.Data.Repositories;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using ParserWorksSites.Services;
-using System.Linq;
-using System;
-using AngleSharp;
-using ParserWorksSites.Parsers;
+﻿using AngleSharp;
 using ParserWorksSites.Data.DbContexts;
+using ParserWorksSites.Data.Models;
+using ParserWorksSites.Data.Repositories;
+using ParserWorksSites.Parsers;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace ParserWorksSites.Services
 {
@@ -27,7 +25,7 @@ namespace ParserWorksSites.Services
             return await _vacancyRepository.GetAllVacancies();
         }
 
-        public async Task<IEnumerable<Vacancy>> GetVacanciesByTypeAsync(string type) 
+        public async Task<IEnumerable<Vacancy>> GetVacanciesByTypeAsync(string type)
         {
             return await _vacancyRepository.GetVacanciesByTypeAsync(type);
         }
@@ -48,8 +46,7 @@ namespace ParserWorksSites.Services
 
         public async Task StartParsing()
         {
-            var site = "https://www.work.ua/jobs-kyiv-it/?page=";
-            var type = "IT";
+            var site = "https://www.work.ua/jobs/?ss=";
             var parentLink = "https://www.work.ua";
 
             var config = Configuration.Default.WithDefaultLoader();
@@ -64,16 +61,12 @@ namespace ParserWorksSites.Services
 
                 var vacanciesDivs = document.QuerySelectorAll("div.card-hover");
 
-                var vacancies = WorkUaParser.GetObjectsFromDivs(vacanciesDivs, type, parentLink).ToList();
+                var vacancies = await WorkUaParser.GetObjectsFromDivs(vacanciesDivs, parentLink);
+                var vacancyList = vacancies.ToList();
 
-                foreach (var vacancy in vacancies)
+                foreach (var vacancy in vacancyList)
                 {
-                    var existingVacancy = await _vacancyRepository.GetVacanciesByTypeAsync(vacancy.Type);
-
-                    if (existingVacancy == null)
-                    {
-                        await _vacancyRepository.CreateVacancyAsync(vacancy);
-                    }
+                    await _vacancyRepository.CreateVacancyAsync(vacancy);
                 }
 
                 await _dbContext.SaveChangesAsync();

@@ -4,24 +4,34 @@ using ParserWorksSites.Data.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Threading.Tasks;
 
 namespace ParserWorksSites.Parsers
 {
     public class WorkUaParser
     {
-        public static IEnumerable<Vacancy> GetObjectsFromDivs(IEnumerable<IElement> divs, string type, string parentLink)
+        public static async Task<IEnumerable<Vacancy>> GetObjectsFromDivs(IEnumerable<IElement> divs, string parentLink)
         {
             IEnumerable<Vacancy> vacancy = Enumerable.Empty<Vacancy>();
             foreach (var div in divs)
             {
                 if (div != null)
                 {
+
+                    var vacancyUrl = String.Concat(parentLink, div.QuerySelector("h2")?.QuerySelector("a")?.GetAttribute("href"));
+                    var config = Configuration.Default.WithDefaultLoader();
+                    var context = BrowsingContext.New(config);
+                    var vacancyDocument = await context.OpenAsync(vacancyUrl);
+                    var categoryElement = vacancyDocument.QuerySelector("span.add-top-xs");
+                    var type = categoryElement?.TextContent;
+                    context.Dispose();
+
                     vacancy = vacancy.Append(new Vacancy(
-                    div.QuerySelector("h2")?.TextContent,
-                    type,
-                    String.Concat(parentLink, div.QuerySelector("h2")?.QuerySelector("a")?.GetAttribute("href"))
-                ));
+                div.QuerySelector("h2")?.TextContent,
+                type,
+                String.Concat(parentLink, div.QuerySelector("h2")?.QuerySelector("a")?.GetAttribute("href"))
+            ));
                 }
             }
             return vacancy;
